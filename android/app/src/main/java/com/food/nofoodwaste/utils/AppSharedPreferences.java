@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 /**
- * Created by RamakrishnaAS on 7/23/2015.
+ * Created by Ramakrishna.
  */
 public class AppSharedPreferences {
 
@@ -44,14 +44,14 @@ public class AppSharedPreferences {
     }
 
     public void saveStringPreferences(String key, String value) {
-        Log.v("String App Preferences", "Pref Val: " + value);
+        //Log.v("String App Preferences", "Pref Val: " + value);
         editPrefs();
         _prefsEditor.putString(key, value);
         commitPrefs();
     }
 
     public void saveBooleanPreferences(String key, Boolean value) {
-        Log.v("Boolean App Preferences", "Pref Val: " + value);
+        //Log.v("Boolean App Preferences", "Pref Val: " + value);
         editPrefs();
         _prefsEditor.putBoolean(key, value);
         commitPrefs();

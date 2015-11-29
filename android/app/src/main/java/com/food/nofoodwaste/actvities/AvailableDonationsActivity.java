@@ -11,8 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.food.nofoodwaste.R;
@@ -39,13 +37,11 @@ public class AvailableDonationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_available_donations);
-        //initView();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
-        //ab.setHomeAsUpIndicator(R.mipmap.ic_launcher);
         ab.setDisplayHomeAsUpEnabled(true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -59,7 +55,6 @@ public class AvailableDonationsActivity extends AppCompatActivity {
         onItemClickListener = new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                //Toast.makeText(getApplicationContext(),"clicked: "+position,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(),AvailableDeliveryPlacesActivity.class);
                 intent.putExtra("DonationObj",foodObjects.get(position));
                 startActivity(intent);
@@ -83,10 +78,6 @@ public class AvailableDonationsActivity extends AppCompatActivity {
 
     private void loadLocations() {
         new loadLocationsAsyncTask().execute();
-    }
-
-    private void displayToast(String toastMsg) {
-        Toast.makeText(getApplicationContext(),toastMsg,Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -113,12 +104,9 @@ public class AvailableDonationsActivity extends AppCompatActivity {
 
 
             // Making a request to url and getting response
-            //String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
             String sUrl = MyConstants.URL_ROOT+"donate/distance";
 
             String jsonStr = serviceHandler.performGetCall(sUrl);
-
-            Log.e("Response: ", "--->>> " + jsonStr);
 
             if (jsonStr != null) try {
                 JSONArray jsonArray = new JSONArray(jsonStr);
@@ -155,7 +143,7 @@ public class AvailableDonationsActivity extends AppCompatActivity {
                 FoodObject foodObject = new FoodObject();
                 if (!jsonObject.isNull("donorMobile"))
                     foodObject.setMobile(jsonObject.getString("donorMobile"));
-                //foodObject.setId(jsonObject.getString("id"));
+
                 if (!jsonObject.isNull("foodType"))
                 foodObject.setFoodtype(jsonObject.getString("foodType"));
 
@@ -173,7 +161,7 @@ public class AvailableDonationsActivity extends AppCompatActivity {
 
                 if (!jsonObject.isNull("distance"))
                 foodObject.setDistance(jsonObject.getString("distance"));
-                //foodObject.sets(jsonObject.getString("donationStatus"));
+
                 foodObjects.add(foodObject);
             }
         }catch (Exception e){}
@@ -184,7 +172,6 @@ public class AvailableDonationsActivity extends AppCompatActivity {
             donationsListAdapter = new DonationsListAdapter(getApplicationContext(), foodObjects);
             donationsListAdapter.setOnItemClickListener(onItemClickListener);
             recyclerView.setAdapter(donationsListAdapter);
-            //donationsListAdapter.setOnItemClickListener(onItemClickListener);
         }
     }
 

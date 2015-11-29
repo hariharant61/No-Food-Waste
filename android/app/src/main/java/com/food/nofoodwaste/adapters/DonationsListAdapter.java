@@ -60,7 +60,7 @@ public class DonationsListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final FoodObject foodObject = foodObjects.get(position);
 
-        String details = foodObject.getFoodtype()+" Kgs, "+foodObject.getQuantity();
+        String details = foodObject.getFoodtype()+", "+foodObject.getQuantity()+" Kgs";
         String address = foodObject.getAddress();
         String distance = "";
         if (foodObject.getDistance() == null){
@@ -70,7 +70,6 @@ public class DonationsListAdapter extends RecyclerView.Adapter<RecyclerView.View
             distance = foodObject.getDistance()+" kms from current location";
             ((DonationsViewHolder) holder).txtDistance.setVisibility(View.VISIBLE);
         }
-        //String distance = foodObject.getDistance()+" kms from current location";
         ((DonationsViewHolder) holder).txtDetails.setText(details);
         ((DonationsViewHolder) holder).txtAddress.setText(address);
         ((DonationsViewHolder) holder).txtDistance.setText(distance);

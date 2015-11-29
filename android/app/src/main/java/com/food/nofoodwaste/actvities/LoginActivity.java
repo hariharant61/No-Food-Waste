@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     private AppCompatCheckBox chkIsVolunteer;
     private String name,mobile;
     AppSharedPreferences appSharedPreferences;
-    private HashMap<String ,String> postParams;
     private String deviceId;
     String requestParams;
 
@@ -82,8 +81,6 @@ public class LoginActivity extends AppCompatActivity {
         if (isValidationSuccess()){
             doLoginTask();
             savePreferences();
-        }else {
-            //displayToast();
         }
     }
 
@@ -103,7 +100,6 @@ public class LoginActivity extends AppCompatActivity {
             object.put("deviceId", String.valueOf(deviceId));
             object.put("deviceToken", "TestDeviceToken");
             requestParams = object.toString();
-            Log.e("login","--->>> "+requestParams);
             new doLoginAsyncTask().execute();
         } catch (Exception ex) {
             displayToast(getString(R.string.unable_to_connect));
@@ -134,28 +130,6 @@ public class LoginActivity extends AppCompatActivity {
         chkIsVolunteer = (AppCompatCheckBox)findViewById(R.id.chk_is_volunteer);
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-*/
     /**
      * Async task class to get json by making HTTP call
      * */
@@ -180,12 +154,9 @@ public class LoginActivity extends AppCompatActivity {
 
 
             // Making a request to url and getting response
-            //String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
             String sUrl = MyConstants.URL_ROOT+"user/create";
 
             String jsonStr = serviceHandler.performPostCall(sUrl, requestParams);
-
-            Log.e("Response: ", "--->>> " + jsonStr);
 
             if (jsonStr != null) try {
                 JSONObject jsonObj = new JSONObject(jsonStr);

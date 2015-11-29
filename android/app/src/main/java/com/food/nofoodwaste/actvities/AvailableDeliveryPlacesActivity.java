@@ -12,11 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.food.nofoodwaste.R;
 import com.food.nofoodwaste.adapters.DeliveryListAdapter;
-import com.food.nofoodwaste.adapters.DonationsListAdapter;
 import com.food.nofoodwaste.utils.AlertMagnaticInterface;
 import com.food.nofoodwaste.utils.FoodObject;
 import com.food.nofoodwaste.utils.MyConstants;
@@ -42,13 +40,11 @@ public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_available_delivery_places);
-        //initView();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
-        //ab.setHomeAsUpIndicator(R.mipmap.ic_launcher);
         ab.setDisplayHomeAsUpEnabled(true);
 
         try{
@@ -69,12 +65,6 @@ public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
         onItemClickListener = new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                //Toast.makeText(getApplicationContext(),"clicked: "+position,Toast.LENGTH_SHORT).show();
-                /*Intent intent = new Intent(getApplicationContext(),ThankYouActivity.class);
-                intent.putExtra("DonationObj",donorFoodObj);
-                intent.putExtra("DeliveryObj",foodObjects.get(position));
-                startActivity(intent);
-                finish();*/
                 final int mPostion = position;
                 ShowAlert.getConfirmDialog(AvailableDeliveryPlacesActivity.this, "Confirm", getString(R.string.alert_msg), "Yes", "No", true, new AlertMagnaticInterface() {
                     @Override
@@ -117,10 +107,6 @@ public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
         new loadLocationsAsyncTask().execute();
     }
 
-    private void displayToast(String toastMsg) {
-        Toast.makeText(getApplicationContext(),toastMsg,Toast.LENGTH_SHORT).show();
-    }
-
     /**
      * Async task class to get json by making HTTP call
      * */
@@ -143,14 +129,10 @@ public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
             // Creating service handler class instance
             ServiceHandler serviceHandler = new ServiceHandler();
 
-
             // Making a request to url and getting response
             //String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
             String sUrl = MyConstants.URL_ROOT+"consumer";
-
             String jsonStr = serviceHandler.performGetCall(sUrl);
-
-            Log.e("Response: ", "--->>> " + jsonStr);
 
             if (jsonStr != null) try {
                 JSONArray jsonArray = new JSONArray(jsonStr);
@@ -185,14 +167,13 @@ public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
             for (int i = 0;i < jsonArray.length() ;i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 FoodObject foodObject = new FoodObject();
-               // foodObject.setId(jsonObject.getString("id"));
 
                 if (!jsonObject.isNull("consumerName"))
                     foodObject.setId(jsonObject.getString("consumerName"));
 
                 if (!jsonObject.isNull("consumerMobile"))
                 foodObject.setMobile(jsonObject.getString("consumerMobile"));
-               // foodObject.setFoodtype(jsonObject.getString("foodType"));
+
                 if (!jsonObject.isNull("quantity"))
                 foodObject.setQuantity(jsonObject.getString("quantity"));
 
@@ -207,7 +188,7 @@ public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
 
                 if (!jsonObject.isNull("distance"))
                 foodObject.setDistance(jsonObject.getString("distance"));
-                //foodObject.sets(jsonObject.getString("donationStatus"));
+
                 foodObjects.add(foodObject);
             }
         }catch (Exception e){}
@@ -215,11 +196,9 @@ public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
 
     private void loadAdapter() {
         if (foodObjects.size() > 0) {
-
             deliveryListAdapter = new DeliveryListAdapter(getApplicationContext(), foodObjects);
             deliveryListAdapter.setOnItemClickListener(onItemClickListener);
             recyclerView.setAdapter(deliveryListAdapter);
-            //donationsListAdapter.setOnItemClickListener(onItemClickListener);
         }
     }
 
