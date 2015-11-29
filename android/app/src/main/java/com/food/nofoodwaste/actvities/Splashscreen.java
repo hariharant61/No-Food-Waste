@@ -1,8 +1,6 @@
 package com.food.nofoodwaste.actvities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -42,25 +40,18 @@ public class Splashscreen extends Activity {
             public void run() {
 
                 try {
-                    // Thread will sleep for 5 seconds
+                    // Thread will sleep
                     sleep(splashScreentime);
 
                     if (isLoggedIn) {
                         Intent myIntent = new Intent(Splashscreen.this, DashBoardActivity.class);
-                        //myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(myIntent);
 
                     } else {
                         Intent myIntent = new Intent(Splashscreen.this, LoginActivity.class);
-                        //myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(myIntent);
 
                     }
-
-
-                    // After 5 seconds redirect to another intent
-                    // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-                    //Remove activity_selection_list
                     finish();
 
                 } catch (Exception e) {

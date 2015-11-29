@@ -13,7 +13,7 @@ import com.food.nofoodwaste.utils.AppSharedPreferences;
 import com.food.nofoodwaste.utils.FoodObject;
 import com.food.nofoodwaste.utils.MyConstants;
 
-public class ThankYouActivity extends AppCompatActivity {
+public class ThankYouMapLocActivity extends AppCompatActivity {
 
     private String fromActivity = "";
     private TextView txtThanksMsg,txtUserName,txtDonorAddress,txtDeliveryAddress,txtDonorMsg,txtDelieveryMsg;
@@ -23,7 +23,7 @@ public class ThankYouActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thank_you);
+        setContentView(R.layout.activity_map_a_location);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

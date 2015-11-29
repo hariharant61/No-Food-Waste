@@ -57,13 +57,13 @@ public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final FoodObject foodObject = foodObjects.get(position);
 
         String details ="";
-                //= foodObject.getFoodtype()+" Kgs, "+foodObject.getQuantity();
+        String address = foodObject.getAddress();
+        String distance = "";
+
         if (foodObject.getFoodtype() == null) {
             details = foodObject.getId();
         }
 
-        String address = foodObject.getAddress();
-        String distance = "";
         if (foodObject.getDistance() == null){
             distance = "8 kms from current location";
             ((DonationsViewHolder) holder).txtDistance.setVisibility(View.GONE);
@@ -71,7 +71,7 @@ public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             distance = foodObject.getDistance()+" kms from current location";
             ((DonationsViewHolder) holder).txtDistance.setVisibility(View.VISIBLE);
         }
-        //String distance = foodObject.getDistance()+" kms from current location";
+
         if (details == null || details.equals("")){
             ((DonationsViewHolder) holder).txtDetails.setVisibility(View.GONE);
         }
