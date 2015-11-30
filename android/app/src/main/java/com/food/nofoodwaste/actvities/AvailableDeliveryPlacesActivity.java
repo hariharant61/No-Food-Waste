@@ -1,6 +1,7 @@
 package com.food.nofoodwaste.actvities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,14 +12,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.food.nofoodwaste.R;
-import com.food.nofoodwaste.adapters.DonationsListAdapter;
+import com.food.nofoodwaste.adapters.DeliveryListAdapter;
+import com.food.nofoodwaste.utils.AlertMagnaticInterface;
 import com.food.nofoodwaste.utils.FoodObject;
 import com.food.nofoodwaste.utils.MyConstants;
 import com.food.nofoodwaste.utils.OnItemClickListener;
 import com.food.nofoodwaste.utils.ServiceHandler;
+import com.food.nofoodwaste.utils.ShowAlert;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,23 +28,31 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class AvailableDonationsActivity extends AppCompatActivity {
+public class AvailableDeliveryPlacesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private DonationsListAdapter donationsListAdapter;
+    private DeliveryListAdapter deliveryListAdapter;
     private ArrayList<FoodObject> foodObjects;
     private OnItemClickListener onItemClickListener;
+    private FoodObject donorFoodObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_available_donations);
+        setContentView(R.layout.activity_available_delivery_places);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
+        try{
+            Intent intent = getIntent();
+            donorFoodObj = (FoodObject)intent.getSerializableExtra("DonationObj");
+        }catch (Exception e){
+
+        }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,25 +65,42 @@ public class AvailableDonationsActivity extends AppCompatActivity {
         onItemClickListener = new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getApplicationContext(),AvailableDeliveryPlacesActivity.class);
-                intent.putExtra("DonationObj",foodObjects.get(position));
-                startActivity(intent);
+                final int mPostion = position;
+                ShowAlert.getConfirmDialog(AvailableDeliveryPlacesActivity.this, "Confirm", getString(R.string.alert_msg), "Yes", "No", true, new AlertMagnaticInterface() {
+                    @Override
+                    public void PositiveMethod(DialogInterface dialog, int id) {
+                        callThankYouScreen(mPostion);
+                    }
+
+                    @Override
+                    public void NegativeMethod(DialogInterface dialog, int id) {
+
+                    }
+                });
             }
         };
 
         foodObjects = new ArrayList<>();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
-        LinearLayoutManager llm = new LinearLayoutManager(AvailableDonationsActivity.this);
+        LinearLayoutManager llm = new LinearLayoutManager(AvailableDeliveryPlacesActivity.this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        donationsListAdapter = new DonationsListAdapter(getApplicationContext(),foodObjects);
-        donationsListAdapter.setOnItemClickListener(onItemClickListener);
-        recyclerView.setAdapter(donationsListAdapter);
+        deliveryListAdapter = new DeliveryListAdapter(getApplicationContext(),foodObjects);
+        deliveryListAdapter.setOnItemClickListener(onItemClickListener);
+        recyclerView.setAdapter(deliveryListAdapter);
 
         loadLocations();
 
+    }
+
+    private void callThankYouScreen(int position) {
+        Intent intent = new Intent(getApplicationContext(),ThankYouActivity.class);
+        intent.putExtra("DonationObj",donorFoodObj);
+        intent.putExtra("DeliveryObj",foodObjects.get(position));
+        startActivity(intent);
+        finish();
     }
 
     private void loadLocations() {
@@ -90,7 +117,7 @@ public class AvailableDonationsActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(AvailableDonationsActivity.this);
+            pDialog = new ProgressDialog(AvailableDeliveryPlacesActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
@@ -102,10 +129,9 @@ public class AvailableDonationsActivity extends AppCompatActivity {
             // Creating service handler class instance
             ServiceHandler serviceHandler = new ServiceHandler();
 
-
             // Making a request to url and getting response
-            String sUrl = MyConstants.URL_ROOT+"donate/distance";
-
+            //String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
+            String sUrl = MyConstants.URL_ROOT+"consumer";
             String jsonStr = serviceHandler.performGetCall(sUrl);
 
             if (jsonStr != null) try {
@@ -141,11 +167,12 @@ public class AvailableDonationsActivity extends AppCompatActivity {
             for (int i = 0;i < jsonArray.length() ;i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 FoodObject foodObject = new FoodObject();
-                if (!jsonObject.isNull("donorMobile"))
-                    foodObject.setMobile(jsonObject.getString("donorMobile"));
 
-                if (!jsonObject.isNull("foodType"))
-                foodObject.setFoodtype(jsonObject.getString("foodType"));
+                if (!jsonObject.isNull("consumerName"))
+                    foodObject.setId(jsonObject.getString("consumerName"));
+
+                if (!jsonObject.isNull("consumerMobile"))
+                foodObject.setMobile(jsonObject.getString("consumerMobile"));
 
                 if (!jsonObject.isNull("quantity"))
                 foodObject.setQuantity(jsonObject.getString("quantity"));
@@ -169,9 +196,9 @@ public class AvailableDonationsActivity extends AppCompatActivity {
 
     private void loadAdapter() {
         if (foodObjects.size() > 0) {
-            donationsListAdapter = new DonationsListAdapter(getApplicationContext(), foodObjects);
-            donationsListAdapter.setOnItemClickListener(onItemClickListener);
-            recyclerView.setAdapter(donationsListAdapter);
+            deliveryListAdapter = new DeliveryListAdapter(getApplicationContext(), foodObjects);
+            deliveryListAdapter.setOnItemClickListener(onItemClickListener);
+            recyclerView.setAdapter(deliveryListAdapter);
         }
     }
 

@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -42,21 +43,17 @@ public class ServiceHandler {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
-            //conn.setHeader("Content-type", "application/json");
 
-
-            //writer.write(getPostDataString(postDataParams));
             writer.write(requestParams);
-
             writer.flush();
             writer.close();
             os.close();
+
             int responseCode=conn.getResponseCode();
-            Log.e("Response Code","--->>> "+responseCode);
+            //Log.e("Response Code","--->>> "+responseCode);
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
@@ -74,61 +71,35 @@ public class ServiceHandler {
         }
 
         return response;
-
-        /*boolean result = false;
-        HttpClient hc = new DefaultHttpClient();
-        String message;
-
-        HttpPost p = new HttpPost(url);
-        JSONObject object = new JSONObject();
-        try {
-
-            object.put("updates", updates);
-            object.put("mobile", mobile);
-            object.put("last_name", lastname);
-            object.put("first_name", firstname);
-            object.put("email", email);
-
-        } catch (Exception ex) {
-
-        }
-
-        try {
-            message = object.toString();
-
-
-            p.setEntity(new StringEntity(message, "UTF8"));
-            p.setHeader("Content-type", "application/json");
-            HttpResponse resp = hc.execute(p);
-            if (resp != null) {
-                if (resp.getStatusLine().getStatusCode() == 204)
-                    result = true;
-            }
-
-            Log.d("Status line", "" + resp.getStatusLine().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
-        return result;*/
     }
 
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException{
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
-                result.append("&");
+    public String  performGetCall(String requestURL){
 
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        try {
+            URL obj = new URL(requestURL);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("GET");
+            int responseCode = con.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                return response.toString();
+            } else {
+                System.out.println("GET request not worked");
+                return "";
+            }
+        }catch (Exception e){
+            return "";
         }
 
-        return result.toString();
     }
 
 }

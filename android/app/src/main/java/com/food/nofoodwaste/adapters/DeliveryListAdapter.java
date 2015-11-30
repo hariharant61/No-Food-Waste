@@ -1,9 +1,7 @@
 package com.food.nofoodwaste.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +10,18 @@ import com.food.nofoodwaste.R;
 import com.food.nofoodwaste.utils.FoodObject;
 import com.food.nofoodwaste.utils.OnItemClickListener;
 
-
-import java.io.File;
 import java.util.ArrayList;
 
 /**
  * Created by RamakrishnaAS on 12/08/2015.
  */
-public class DonationsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Context mContext;
     ArrayList<FoodObject> foodObjects;
     OnItemClickListener onItemClickListener;
 
 
-    public DonationsListAdapter(Context context,ArrayList<FoodObject> foodObjects) {
+    public DeliveryListAdapter(Context context, ArrayList<FoodObject> foodObjects) {
         this.foodObjects = foodObjects;
         mContext = context;
     }
@@ -60,15 +56,24 @@ public class DonationsListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final FoodObject foodObject = foodObjects.get(position);
 
-        String details = foodObject.getFoodtype()+", "+foodObject.getQuantity()+" Kgs";
+        String details ="";
         String address = foodObject.getAddress();
         String distance = "";
+
+        if (foodObject.getFoodtype() == null) {
+            details = foodObject.getId();
+        }
+
         if (foodObject.getDistance() == null){
             distance = "8 kms from current location";
             ((DonationsViewHolder) holder).txtDistance.setVisibility(View.GONE);
         }else{
             distance = foodObject.getDistance()+" kms from current location";
             ((DonationsViewHolder) holder).txtDistance.setVisibility(View.VISIBLE);
+        }
+
+        if (details == null || details.equals("")){
+            ((DonationsViewHolder) holder).txtDetails.setVisibility(View.GONE);
         }
         ((DonationsViewHolder) holder).txtDetails.setText(details);
         ((DonationsViewHolder) holder).txtAddress.setText(address);

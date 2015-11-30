@@ -41,8 +41,7 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
     private int PLACE_PICKER_REQUEST = 1;
     private RadioButton radioBreakfast,radioLunch,radioDinner;
     private EditText edtQuantity,edtAddress;
-    private String foodType = "dinner",quantity = "",address = "",lat = "",lng = "",userid= "";
-    //private HashMap<String ,String> postParams;
+    private String foodType = "Dinner",quantity = "",address = "",lat = "",lng = "";
     private String requestParams;
     AppSharedPreferences appSharedPreferences;
 
@@ -50,13 +49,11 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donations_details_entry);
-        //initView();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         appSharedPreferences = new AppSharedPreferences(getApplicationContext());
-        userid = appSharedPreferences.getStringPreferences(MyConstants.PREF_KEY_ID);
 
         radioBreakfast = (RadioButton)findViewById(R.id.radio_breakfast);
         radioLunch = (RadioButton)findViewById(R.id.radio_lunch);
@@ -75,7 +72,6 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
                 .build();
 
         final ActionBar ab = getSupportActionBar();
-        //ab.setHomeAsUpIndicator(R.mipma);
         ab.setDisplayHomeAsUpEnabled(true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -96,7 +92,7 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    foodType = "breakfast";
+                    foodType = "Breakfast";
                 }
             }
         });
@@ -104,7 +100,7 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    foodType = "lunch";
+                    foodType = "Lunch";
                 }
             }
         });
@@ -112,7 +108,7 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    foodType = "dinner";
+                    foodType = "Dinner";
                 }
             }
         });
@@ -136,31 +132,16 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
     }
 
     private void doSubmitDonationTask() {
-        /*postParams = new HashMap<>();
-        postParams.put("userid",userid);
-        postParams.put("foodtype",foodType);
-        postParams.put("quantity",quantity);
-        postParams.put("latitude",lat);
-        postParams.put("longitude",lng);
-        postParams.put("address", address);*/
-        /*{ "donorMobile": "9944775657", "donationStatus": "open",
-                "foodType":"lunch", "quantity":"10",
-                "latitude":"102.30", "longitude":"233.dd", "address":"Some text" }*/
         JSONObject object = new JSONObject();
         try {
-            //object.put("consumerName", appSharedPreferences.getStringPreferences(MyConstants.PREF_KEY_NAME));
-            object.put("donorMobile", appSharedPreferences.getStringPreferences(MyConstants.PREF_KEY_MOBILE));
-            //object.put("isVolunteer", String.valueOf(appSharedPreferences.getStringPreferences(MyConstants.PREF_KEY_IS_VOLUNTEER)));
-            //object.put("deviceId", String.valueOf(appSharedPreferences.getStringPreferences(MyConstants.PREF_KEY_DEVICE_ID)));
-            object.put("quantity", quantity);
-            object.put("foodType", foodType);
-            object.put("donationStatus", "open");
-            object.put("latitude", lat);
-            object.put("longitude", lng);
             object.put("address", address);
-            object.put("deviceToken", "TestDeviceToken");
+            object.put("donorMobile", appSharedPreferences.getStringPreferences(MyConstants.PREF_KEY_MOBILE));
+            object.put("foodType", foodType);
+            object.put("longitude", lng);
+            object.put("quantity", quantity);
+            object.put("latitude", lat);
+            object.put("donationStatus", "open");
             requestParams = object.toString();
-            Log.e("Params","--->>> "+requestParams);
             new doSubmitDonationAsyncTask().execute();
         } catch (Exception ex) {
             displayToast(getString(R.string.unable_to_connect));
@@ -177,7 +158,6 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
     @Override
     protected void onStop() {
         if( mGoogleApiClient != null && mGoogleApiClient.isConnected() ) {
-            //mAdapter.setGoogleApiClient( null );
             mGoogleApiClient.disconnect();
         }
         super.onStop();
@@ -208,36 +188,22 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
         if( place == null )
             return;
 
-        //DisplayLog.displayNormalLog("MainActivity","Place",place);
-
         String content = "";
-        //if( !TextUtils.isEmpty(place.getName()) ) {
-        //    content += "Name: " + place.getName() + "\n";
-        //}
         if( !TextUtils.isEmpty(place.getAddress()) ) {
             content += place.getAddress();
         }
-        //if( !TextUtils.isEmpty( place.getPhoneNumber() ) ) {
-        //    content += "Phone: " + place.getPhoneNumber();
-        //}
 
         if( !TextUtils.isEmpty( String.valueOf(place.getLatLng()) ) ) {
-            Log.e("MainActivity", "Latlong: "+String.valueOf(place.getLatLng()));
             LatLng mLatLng = place.getLatLng();
-            //isplayLog.displayNormalLog("MainActivity", "Latlong Points", mLatLng.latitude+" - "+mLatLng.longitude);
             lat = String.valueOf(mLatLng.latitude);
             lng = String.valueOf(mLatLng.longitude);
-
         }
-        Log.e("Main ac","address: "+content);
 
         if (content != null && !content.equals("")){
             edtAddress.setText(content);
         }else {
             edtAddress.setText("");
         }
-        //mTextView.setText( content );
-       // medtAddress.setText(content);
     }
 
     private boolean isValidationSuccess(){
@@ -283,12 +249,9 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
 
 
             // Making a request to url and getting response
-            //String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
             String sUrl = MyConstants.URL_ROOT+"donate/create";
 
             String jsonStr = serviceHandler.performPostCall(sUrl, requestParams);
-
-            Log.e("Response: ", "--->>> " + jsonStr);
 
             if (jsonStr != null) try {
                 JSONObject jsonObj = new JSONObject(jsonStr);
@@ -312,6 +275,7 @@ public class EnterDonationDetailsActivity extends AppCompatActivity implements G
             startActivity(intent);
             intent.putExtra(MyConstants.FROM_ACTIVITY,MyConstants.KEY_DONOR);
             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            finish();
         }
 
     }
